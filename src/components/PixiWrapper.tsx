@@ -10,7 +10,7 @@ const PixiWrapper = (props: PixiWrapperProps) => {
   const windowSize = useWindowSize();
 
   return (
-    <Stage style={{border: "white solid 1px"}} width={windowSize.width || 0} height={windowSize.height || 0} options={{antialias: true}}>
+    <Stage width={windowSize.width || 0} height={windowSize.height || 0} options={{antialias: true}}>
       <InteractiveViewport>
           <Rectangle height={100} width={200} x={0} y={0} />
           <Rectangle height={100} width={200} x={200} y={0} />
