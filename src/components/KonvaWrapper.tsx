@@ -1,7 +1,7 @@
 import { Layer, Rect, Stage } from "react-konva";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { KonvaEventObject } from "konva/lib/Node";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import KonvaGrid from "./KonvaGrid";
 
 type KonvaWrapperProps = {};
@@ -10,7 +10,7 @@ const KonvaWrapper = (props: KonvaWrapperProps) => {
   const windowSize = useWindowSize();
   const [scale, setScale] = useState(1);
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
-  const [draggable, setDraggable] = useState(false);
+  const [draggable, setDraggable] = useState(true);
 
   const handleDrag = (event: KonvaEventObject<DragEvent>) => {
     setStagePos({
@@ -23,6 +23,8 @@ const KonvaWrapper = (props: KonvaWrapperProps) => {
     e.evt.preventDefault();
 
     const scaleBy = 1.1;
+    const minScale = 0.5;
+    const maxScale = 2.5;
     const stage = e.target.getStage();
     if (stage === null) return;
     const pointer = stage.getPointerPosition();
@@ -33,21 +35,22 @@ const KonvaWrapper = (props: KonvaWrapperProps) => {
       y: stage.getPointerPosition()!.y / oldScale - stage.y() / oldScale,
     };
     const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    if (newScale < minScale || newScale > maxScale) return;
+    setScale(newScale);
     setStagePos({
       x: -(pointerPointsTo.x - stage.getPointerPosition()!.x / newScale) * newScale,
       y: -(pointerPointsTo.y - stage.getPointerPosition()!.y / newScale) * newScale
     });
-    setScale(newScale);
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key !== "Meta") return;
-    setDraggable(true);
+    // if (event.key !== "Meta") return;
+    // setDraggable(true);
   };
 
   const handleKeyUp = (event: KeyboardEvent) => {
-    if (event.key !== "Meta") return;
-    setDraggable(false);
+    // if (event.key !== "Meta") return;
+    // setDraggable(false);
   };
 
   useEffect(() => {
@@ -71,14 +74,14 @@ const KonvaWrapper = (props: KonvaWrapperProps) => {
       x={stagePos.x}
       y={stagePos.y}
     >
-      {/* <KonvaGrid
-        cellSize={50}
-        minimumVisibleX={stagePos.x}
-        maximumVisibleX={stagePos.x + 200}
-        minimumVisibleY={stagePos.y}
-        maximumVisibleY={stagePos.y + 200}
-      /> */}
       <Layer>
+      <KonvaGrid
+        cellSize={50}
+        minimumVisibleX={(-1 * stagePos.x) / scale}
+        maximumVisibleX={(-1 * stagePos.x + windowSize.width!) / scale}
+        minimumVisibleY={(-1 * stagePos.y) / scale}
+        maximumVisibleY={(-1 * stagePos.y + windowSize.height!) / scale}
+      />
         <Rect
           height={50}
           width={100}
