@@ -1,6 +1,7 @@
+import { convertXYCoordinatesToGridRef } from "@/utilities/grid.utilities";
 import { roundToNearest } from "@/utilities/number.utilities";
 import { useCallback, useEffect, useRef } from "react";
-import { Group, Layer, Rect } from "react-konva";
+import { Rect } from "react-konva";
 
 type KonvaWrapperProps = {
   cellSize: number;
@@ -21,7 +22,7 @@ const KonvaGrid = ({
 
   const generateGridCell = (cellSize: number, x: number, y: number) => (
     <Rect
-      key={`${x}-${y}`}
+      key={convertXYCoordinatesToGridRef(x, y, cellSize)}
       x={x}
       y={y}
       width={cellSize}

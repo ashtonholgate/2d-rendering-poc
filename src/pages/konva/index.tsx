@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
-const KonvaWrapper = dynamic(() => import("../../components/KonvaWrapper"), {
+const KonvaWrapper = dynamic(() => import("../../components/konva/KonvaWrapper"), {
   ssr: false,
 });
 
