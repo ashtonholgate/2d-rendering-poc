@@ -32,7 +32,7 @@ const KonvaGridAxis = ({
   const yAxisLabels = useRef<JSX.Element[]>([]);
   const generateXAxisLabel = useCallback(
     (cellSize: number, x: number, xOffset: number) => {
-      const xVal = (-1 * xOffset) - (-1 * roundToNearest(x, 50, "floor"));
+      const xVal = (-1 * xOffset) + roundToNearest(x, 50, "floor");
       return (
         <Group
           key={convertCoordinateToRef(x, "x", cellSize)}
@@ -57,7 +57,7 @@ const KonvaGridAxis = ({
 
   const generateYAxisLabel = useCallback(
     (cellSize: number, y: number, yOffset: number) => {
-      const yVal = (-1 * yOffset) - (-1 * roundToNearest(y, 50, "floor"));
+      const yVal = (-1 * yOffset) + roundToNearest(y, 50, "floor");
       return (
         <Group
           key={convertCoordinateToRef(y, "y", cellSize)}
