@@ -18,7 +18,7 @@ export const convertCoordinateToRef = (
   cellSize: number,
 ) => {
   return `${type.toUpperCase()}${coordinate < 0 ? "-" : ""}${(
-    roundToNearest(Math.abs(coordinate), 50, "floor") / cellSize
+    Math.abs(roundToNearest(coordinate, 50, "floor")) / cellSize
   )
     .toString()
     .padStart(3, "0")}`;
