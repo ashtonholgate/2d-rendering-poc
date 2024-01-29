@@ -11,7 +11,7 @@ const KonvaWrapper = (props: KonvaWrapperProps) => {
   const windowSize = useWindowSize();
   const [mainLayerScale, setMainLayerScale] = useState(1);
   const [mainLayerPos, setMainLayerPos] = useState({ x: 100, y: 50 });
-  const [mainLayerIsDraggable, setMainLayerIsDraggable] = useState(true);
+  const [mainLayerIsDraggable, setMainLayerIsDraggable] = useState(false);
 
   const handleDrag = (event: KonvaEventObject<DragEvent>) => {
     setMainLayerPos({
@@ -50,13 +50,13 @@ const KonvaWrapper = (props: KonvaWrapperProps) => {
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    // if (event.key !== "Meta") return;
-    // setMainLayerIsDraggable(true);
+    if (event.key !== "Alt") return;
+    setMainLayerIsDraggable(true);
   };
 
   const handleKeyUp = (event: KeyboardEvent) => {
-    // if (event.key !== "Meta") return;
-    // setMainLayerIsDraggable(false);
+    if (event.key !== "Alt") return;
+    setMainLayerIsDraggable(false);
   };
 
   useEffect(() => {

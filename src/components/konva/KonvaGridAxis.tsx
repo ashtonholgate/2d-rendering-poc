@@ -1,6 +1,6 @@
 import { convertCoordinateToRef } from "@/utilities/grid.utilities";
 import { roundToNearest } from "@/utilities/number.utilities";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Group, Layer, Rect, Text } from "react-konva";
 
 type KonvaGridAxisProps = {
@@ -28,22 +28,24 @@ const KonvaGridAxis = ({
   stageWidth,
   stageHeight,
 }: KonvaGridAxisProps) => {
-  const xAxisLabels = useRef<JSX.Element[]>([]);
-  const yAxisLabels = useRef<JSX.Element[]>([]);
+  const [xAxisLabels, setXAxisLabels] = useState<JSX.Element[]>([]);
+  const [yAxisLabels, setYAxisLabels] = useState<JSX.Element[]>([]);
   const generateXAxisLabel = useCallback(
-    (cellSize: number, x: number, xOffset: number) => {
-      const xVal = (-1 * xOffset) + roundToNearest(x, 50, "floor");
+    (cellSize: number, x: number, xOffset: number, scale: number) => {
+      const xVal = -1 * xOffset + (roundToNearest(x, cellSize, "floor") * scale);
       return (
         <Group
           key={convertCoordinateToRef(x, "x", cellSize)}
           x={xVal}
-          y={stageHeight - 50}
+          y={stageHeight - 45}
           width={cellSize}
-          height={cellSize}
+          height={20}
+          scaleX={scale}
+          scaleY={scale}
         >
           <Text
             width={cellSize}
-            height={cellSize}
+            height={20}
             fill={"white"}
             text={convertCoordinateToRef(x, "x", cellSize)}
             align="center"
@@ -56,19 +58,23 @@ const KonvaGridAxis = ({
   );
 
   const generateYAxisLabel = useCallback(
-    (cellSize: number, y: number, yOffset: number) => {
-      const yVal = (-1 * yOffset) + roundToNearest(y, 50, "floor");
+    (cellSize: number, y: number, yOffset: number, scale: number) => {
+      const yVal = -1 * yOffset + (roundToNearest(y, 50, "floor") * scale);
       return (
         <Group
           key={convertCoordinateToRef(y, "y", cellSize)}
-          x={0}
+          x={cellSize - 5}
           y={yVal}
           width={cellSize}
-          height={cellSize}
+          height={20}
+          scaleX={scale}
+          scaleY={scale}
+          rotation={90}
+          
         >
           <Text
             width={cellSize}
-            height={cellSize}
+            height={20}
             fill={"white"}
             text={convertCoordinateToRef(y, "y", cellSize)}
             align="center"
@@ -83,18 +89,18 @@ const KonvaGridAxis = ({
   useEffect(() => {
     const newXLabels: JSX.Element[] = [];
     const newYLabels: JSX.Element[] = [];
-    let xCounter = minimumVisibleX;
-    let yCounter = minimumVisibleY;
-    while (xCounter < maximumVisibleX) {
-      newXLabels.push(generateXAxisLabel(cellSize, xCounter, xOffset));
+    let xCounter = minimumVisibleX - cellSize;
+    let yCounter = minimumVisibleY - cellSize;
+    while (xCounter < maximumVisibleX + cellSize) {
+      newXLabels.push(generateXAxisLabel(cellSize, xCounter, xOffset, scale));
       xCounter += cellSize;
     }
-    while (yCounter < maximumVisibleY) {
-      newYLabels.push(generateYAxisLabel(cellSize, yCounter, yOffset));
+    while (yCounter < maximumVisibleY + cellSize) {
+      newYLabels.push(generateYAxisLabel(cellSize, yCounter, yOffset, scale));
       yCounter += cellSize;
     }
-    xAxisLabels.current = newXLabels;
-    yAxisLabels.current = newYLabels;
+    setXAxisLabels(newXLabels);
+    setYAxisLabels(newYLabels);
   }, [
     cellSize,
     scale,
@@ -111,7 +117,7 @@ const KonvaGridAxis = ({
   ]);
 
   return (
-    <Layer>
+    <Layer listening={false}>
       <Rect x={0} y={0} width={50} height={stageHeight} fill="black" />
       <Rect
         x={0}
@@ -121,17 +127,16 @@ const KonvaGridAxis = ({
         fill="black"
       />
 
-      {xAxisLabels.current}
-      {yAxisLabels.current}
+      {xAxisLabels}
+      {yAxisLabels}
 
       <Rect x={0} y={stageHeight - 50} width={50} height={50} fill="black" />
       <Rect
         x={50}
         y={0}
-        width={stageWidth - 50}
-        height={stageHeight - 50}
+        width={stageWidth - 51}
+        height={stageHeight - 51}
         stroke="white"
-        listening={false}
       />
     </Layer>
   );

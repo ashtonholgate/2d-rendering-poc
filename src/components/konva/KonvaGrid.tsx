@@ -1,6 +1,6 @@
 import { convertXYCoordinatesToGridRef } from "@/utilities/grid.utilities";
 import { roundToNearest } from "@/utilities/number.utilities";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Rect } from "react-konva";
 
 type KonvaWrapperProps = {
@@ -18,7 +18,7 @@ const KonvaGrid = ({
   minimumVisibleY,
   maximumVisibleY,
 }: KonvaWrapperProps) => {
-  let cells = useRef<JSX.Element[]>([]);
+  let [cells, setCells] = useState<JSX.Element[]>([]);
 
   const generateGridCell = (cellSize: number, x: number, y: number) => (
     <Rect
@@ -40,10 +40,10 @@ const KonvaGrid = ({
       maximumVisibleY: number
     ) => {
       const newCells: JSX.Element[] = [];
-      const startX = roundToNearest(minimumVisibleX, 50, "floor");
-      const endX = roundToNearest(maximumVisibleX, 50, "ceil");
-      const startY = roundToNearest(minimumVisibleY, 50, "floor");
-      const endY = roundToNearest(maximumVisibleY, 50, "ceil");
+      const startX = roundToNearest(minimumVisibleX, cellSize, "floor") - cellSize;
+      const endX = roundToNearest(maximumVisibleX, cellSize, "ceil") + cellSize;
+      const startY = roundToNearest(minimumVisibleY, cellSize, "floor") - cellSize;
+      const endY = roundToNearest(maximumVisibleY, cellSize, "ceil") + cellSize;
       let xCounter = startX;
       let yCounter = startY;
       while (yCounter < endY) {
@@ -54,7 +54,7 @@ const KonvaGrid = ({
         xCounter = startX;
         yCounter += cellSize;
       }
-      cells.current = newCells;
+      setCells(newCells);
     },
     []
   );
@@ -76,7 +76,7 @@ const KonvaGrid = ({
     handleGridCellGeneration,
   ]);
 
-  return cells.current;
+  return cells;
 };
 
 export default KonvaGrid;
